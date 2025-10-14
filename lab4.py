@@ -1,6 +1,5 @@
 import random
-import time
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 class TreeNode:
     """Узел бинарного дерева поиска."""
@@ -15,7 +14,7 @@ def insert(root: Optional[TreeNode], value: int) -> TreeNode:
         return TreeNode(value)
     if value < root.value:
         root.left = insert(root.left, value)
-    elif value > root.value:  # Изменено условие для исключения дубликатов
+    elif value >= root.value:  # Изменено условие для исключения дубликатов
         root.right = insert(root.right, value)
     return root
 
@@ -26,16 +25,24 @@ def in_order_traversal(root: Optional[TreeNode], result: List[int]) -> None:
         result.append(root.value)
         in_order_traversal(root.right, result)
 
-def search(root: Optional[TreeNode], value: int) -> bool:
-    """Поиск значения в бинарном дереве."""
+
+def search(root: Optional[TreeNode], value: int, level: int = 0) -> Tuple[bool, int]:
     if root is None:
-        return False
+        return False, -1  # Элемент не найден
+    
+    # Проверяем текущий узел
     if root.value == value:
-        return True
-    elif value < root.value:
-        return search(root.left, value)
-    else:
-        return search(root.right, value)
+        return True, level  # Нашли совпадение, возвращаем текущий уровень
+    
+    # Если значение меньше текущего узла - ищем в левом поддереве
+    if value < root.value:
+        return search(root.left, value, level + 1)
+    
+    # Если значение больше текущего узла - ищем в правом поддереве
+    # Если значения равны, но нам нужно найти все вхождения - продолжаем поиск справа
+    return search(root.right, value, level + 1)
+
+
 
 def count_occurrences(root: Optional[TreeNode], value: int) -> int:
     """Подсчёт числа вхождений заданного элемента в дерево."""
@@ -89,17 +96,6 @@ def fill_data() -> List[int]:
             except ValueError:
                 print("Ошибка: введите целые числа!")
 
-def benchmark_sorting(data: List[int]) -> float:
-    """Замеряет время сортировки."""
-    start_time = time.perf_counter()
-    root = None
-    for num in data:
-        root = insert(root, num)
-    
-    sorted_data = []
-    in_order_traversal(root, sorted_data)
-    sort_time = time.perf_counter() - start_time
-    return sort_time, sorted_data
 
 def print_tree(root: Optional[TreeNode], level: int = 0, prefix: str = ""):
     """Рекурсивно печатает дерево в консоль."""
@@ -136,19 +132,21 @@ def main():
     while True:
         try:
             search_value = int(input("\nВведите значение для поиска (или 0 для выхода): "))
-            if search_value == 0:
+            if search_value == "0\n":
                 break
             
-            if search(root, search_value):
+            if search(root, search_value, level=0):
                 count = count_occurrences(root, search_value)
                 print(f"Значение {search_value} найдено! Количество вхождений: {count}")
             else:
                 print(f"Значение {search_value} не найдено")
             
         except ValueError:
-            print("Ошибка: введите целое число!")
+            break
     
     print("\nПрограмма завершена")
 
 if __name__ == "__main__":
     main()
+    # определить уровень нахождения элемента при поиске со вхождением одинаковых элементов и вывод
+    # улучшить функцию поиска 
