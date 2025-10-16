@@ -131,7 +131,7 @@ def main():
     # Демонстрация поиска
     while True:
         try:
-            search_value = int(input("\nВведите значение для поиска (или 0 для выхода): "))
+            search_value = int(input("\nВведите значение для поиска (или нечисло для выхода): "))
             if search_value == "0\n":
                 break
             
