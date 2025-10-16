@@ -2,14 +2,12 @@ import random
 from typing import List, Optional, Tuple
 
 class TreeNode:
-    """Узел бинарного дерева поиска."""
     def __init__(self, value: int):
         self.value = value
         self.left: Optional[TreeNode] = None
         self.right: Optional[TreeNode] = None
 
 def insert(root: Optional[TreeNode], value: int) -> TreeNode:
-    """Вставляет значение в бинарное дерево (допускаются дубликаты)."""
     if root is None:
         return TreeNode(value)
     if value < root.value:
@@ -19,7 +17,6 @@ def insert(root: Optional[TreeNode], value: int) -> TreeNode:
     return root
 
 def in_order_traversal(root: Optional[TreeNode], result: List[int]) -> None:
-    """In-order обход дерева (сортировка по возрастанию)."""
     if root is not None:
         in_order_traversal(root.left, result)
         result.append(root.value)
@@ -62,7 +59,6 @@ def search_first_occurrence(root: Optional[TreeNode], value: int, level: int = 0
     return search_first_occurrence(root.right, value, level + 1)
 
 def count_occurrences(root: Optional[TreeNode], value: int) -> int:
-    """Подсчёт числа вхождений заданного элемента в дерево."""
     if root is None:
         return 0
     count = 0
@@ -73,11 +69,9 @@ def count_occurrences(root: Optional[TreeNode], value: int) -> int:
     return count
 
 def generate_random_numbers(count: int, min_val: int, max_val: int) -> List[int]:
-    """Генерирует случайные числа."""
     return [random.randint(min_val, max_val) for _ in range(count)]
 
 def manual_input() -> List[int]:
-    """Ручной ввод чисел."""
     while True:
         try:
             print("Введите числа через пробел:")
@@ -88,7 +82,6 @@ def manual_input() -> List[int]:
             print("Ошибка: введите только целые числа!")
 
 def get_fill_method() -> str:
-    """Получает метод заполнения от пользователя."""
     print("Выберите способ заполнения:")
     print("1 - Вручную")
     print("2 - Случайными числами")
@@ -99,7 +92,6 @@ def get_fill_method() -> str:
         print("Неверный ввод! Попробуйте снова.")
 
 def fill_data() -> List[int]:
-    """Заполняет данные."""
     choice = get_fill_method()
     if choice == '1':
         return manual_input()
@@ -114,7 +106,6 @@ def fill_data() -> List[int]:
                 print("Ошибка: введите целые числа!")
 
 def print_tree(root: Optional[TreeNode], level: int = 0, prefix: str = ""):
-    """Рекурсивно печатает дерево в консоль."""
     if root is not None:
         # Печатаем правое поддерево
         print_tree(root.right, level + 1, "    " + "┌─── ")
@@ -126,7 +117,6 @@ def print_tree(root: Optional[TreeNode], level: int = 0, prefix: str = ""):
         print_tree(root.left, level + 1, "    " + "└─── ")
 
 def main():
-    """Основная функция программы."""
     print("\n--- Создание бинарного дерева поиска ---\n")
     
     # Выбор способа заполнения
