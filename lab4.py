@@ -9,12 +9,12 @@ class TreeNode:
         self.right: Optional[TreeNode] = None
 
 def insert(root: Optional[TreeNode], value: int) -> TreeNode:
-    """Вставляет уникальное значение в бинарное дерево."""
+    """Вставляет значение в бинарное дерево (допускаются дубликаты)."""
     if root is None:
         return TreeNode(value)
     if value < root.value:
         root.left = insert(root.left, value)
-    elif value >= root.value:  # Изменено условие для исключения дубликатов
+    else:  # Дубликаты идут в правое поддерево
         root.right = insert(root.right, value)
     return root
 
@@ -25,24 +25,57 @@ def in_order_traversal(root: Optional[TreeNode], result: List[int]) -> None:
         result.append(root.value)
         in_order_traversal(root.right, result)
 
-
-def search(root: Optional[TreeNode], value: int, level: int = 0) -> Tuple[bool, int]:
+def search_all_occurrences(root: Optional[TreeNode], value: int, level: int = 0) -> List[Tuple[bool, int]]:
+    """
+    Находит ВСЕ вхождения элемента и возвращает список с уровнями.
+    
+    Args:
+        root: Корень дерева
+        value: Искомое значение
+        level: Текущий уровень (для рекурсии)
+    
+    Returns:
+        Список кортежей (найдено_ли, уровень) для каждого найденного элемента
+    """
     if root is None:
-        return False, -1  # Элемент не найден
+        return []
     
-    # Проверяем текущий узел
+    results = []
+    
+    # Если нашли совпадение - добавляем в результаты
     if root.value == value:
-        return True, level  # Нашли совпадение, возвращаем текущий уровень
+        results.append((True, level))
     
-    # Если значение меньше текущего узла - ищем в левом поддереве
+    # Поиск в левом поддереве (только если значение МЕНЬШЕ или РАВНО)
+    # Для дубликатов тоже ищем слева, если это нужно
+    if value <= root.value:
+        results.extend(search_all_occurrences(root.left, value, level + 1))
+    
+    # Поиск в правом поддереве (только если значение БОЛЬШЕ или РАВНО)
+    if value >= root.value:
+        results.extend(search_all_occurrences(root.right, value, level + 1))
+    
+    return results
+
+def search_first_occurrence(root: Optional[TreeNode], value: int, level: int = 0) -> Tuple[bool, int]:
+    """
+    Находит ПЕРВОЕ вхождение элемента (самое верхнее в дереве).
+    
+    Returns:
+        Кортеж (найдено_ли, уровень)
+    """
+    if root is None:
+        return False, -1
+    
+    if root.value == value:
+        return True, level
+    
+    # Если значение меньше - ищем только слева
     if value < root.value:
-        return search(root.left, value, level + 1)
+        return search_first_occurrence(root.left, value, level + 1)
     
-    # Если значение больше текущего узла - ищем в правом поддереве
-    # Если значения равны, но нам нужно найти все вхождения - продолжаем поиск справа
-    return search(root.right, value, level + 1)
-
-
+    # Если значение больше или равно - ищем только справа
+    return search_first_occurrence(root.right, value, level + 1)
 
 def count_occurrences(root: Optional[TreeNode], value: int) -> int:
     """Подсчёт числа вхождений заданного элемента в дерево."""
@@ -96,7 +129,6 @@ def fill_data() -> List[int]:
             except ValueError:
                 print("Ошибка: введите целые числа!")
 
-
 def print_tree(root: Optional[TreeNode], level: int = 0, prefix: str = ""):
     """Рекурсивно печатает дерево в консоль."""
     if root is not None:
@@ -132,12 +164,20 @@ def main():
     while True:
         try:
             search_value = int(input("\nВведите значение для поиска (или нечисло для выхода): "))
-            if search_value == "0\n":
-                break
             
-            if search(root, search_value, level=0):
-                count = count_occurrences(root, search_value)
-                print(f"Значение {search_value} найдено! Количество вхождений: {count}")
+            # Поиск всех вхождений
+            all_occurrences = search_all_occurrences(root, search_value)
+            count = count_occurrences(root, search_value)
+            
+            if all_occurrences:
+                print(f"Значение {search_value} найдено {count} раз(а)!")
+                print("Уровни нахождения элементов:")
+                for i, (found, level) in enumerate(all_occurrences, 1):
+                    print(f"  Вхождение {i}: уровень {level}")
+                
+                # Первое вхождение
+                first_found, first_level = search_first_occurrence(root, search_value)
+                print(f"Первое вхождение: уровень {first_level}")
             else:
                 print(f"Значение {search_value} не найдено")
             
@@ -148,5 +188,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # определить уровень нахождения элемента при поиске со вхождением одинаковых элементов и вывод
-    # улучшить функцию поиска 
