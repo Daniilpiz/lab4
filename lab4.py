@@ -26,17 +26,7 @@ def in_order_traversal(root: Optional[TreeNode], result: List[int]) -> None:
         in_order_traversal(root.right, result)
 
 def search_all_occurrences(root: Optional[TreeNode], value: int, level: int = 0) -> List[Tuple[bool, int]]:
-    """
-    Находит ВСЕ вхождения элемента и возвращает список с уровнями.
-    
-    Args:
-        root: Корень дерева
-        value: Искомое значение
-        level: Текущий уровень (для рекурсии)
-    
-    Returns:
-        Список кортежей (найдено_ли, уровень) для каждого найденного элемента
-    """
+   
     if root is None:
         return []
     
@@ -58,12 +48,6 @@ def search_all_occurrences(root: Optional[TreeNode], value: int, level: int = 0)
     return results
 
 def search_first_occurrence(root: Optional[TreeNode], value: int, level: int = 0) -> Tuple[bool, int]:
-    """
-    Находит ПЕРВОЕ вхождение элемента (самое верхнее в дереве).
-    
-    Returns:
-        Кортеж (найдено_ли, уровень)
-    """
     if root is None:
         return False, -1
     
